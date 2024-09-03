@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">Activo fijo</string>
+    <string name="welcome">¡Bienvenid@!</string>
+    <string name="message">Inicia sesión para continuar</string>
+    <string name="noempleado">No de empleado</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar</string>
+    <string name="logout">Salir</string>
+    <string name="add">Agregar</string>
+
+    <string name="lblcp">&#169; 2024 DAWS IT Team. All rights reserved</string>
+
+    <!--Messages-->
+    <string name="scan_qr">Escanea un codigo QR para continuar</string>
+
+    <!--Error messages-->
+    <string name="invalidUser">Usuario o contraseña incorrecta</string>
+    <string name="user_required">Introduce un usuario o contraseña</string>
+    <string name="qr_invalid">El codigo escaneado es incorrecto</string>
+    <string name="error_login">Error conectando con el servidor></string>
+
+    <!-- Images description-->
+    <string name="icon_person">Icon person login</string>
+    <string name="icon_lock">Icon lock login</string>
+    <string name="img_daws">Logo Durango Automotive Wiring System</string>
+
+<!--    Vista contenido -->
+    <string name="code_active">Codigo de activo:</string>
+    <string name="name">Nombre:</string>
+    <string name="model">Modelo:</string>
+    <string name="number_serie">Num. Serie:</string>
+    <string name="pediment">Pedimento:</string>
+    <string name="num_ctrl">Num. Control:</string>
+    <string name="plant">Planta:</string>
+    <string name="department">Departamento:</string>
+    <string name="organization">Organización:</string>
+
+
+
+    <!--Test-->
+    <string-array name="Languages">
+        <item>Java</item>
+        <item>Kotlin</item>
+        <item>Swift</item>
+        <item>Python</item>
+        <item>Scala</item>
+        <item>Perl</item>
+    </string-array>
+
+    <string name="selected_item">Selected item:</string>
+</resources>
