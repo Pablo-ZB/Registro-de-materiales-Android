@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Activo fijo</string>
+    <string name="app_name">Registro de Materiales</string>
     <string name="welcome">¡Bienvenid@!</string>
     <string name="message">Inicia sesión para continuar</string>
     <string name="noempleado">No de empleado</string>
@@ -8,14 +8,17 @@
     <string name="logout">Salir</string>
     <string name="add">Agregar</string>
 
+    <string name="quantity_required">Por favor, ingrese una cantidad válida (números solamente).</string>
+    <string name="quantity_inserted">Cantidad ingresada correctamente.</string>
+
     <string name="lblcp">&#169; 2024 DAWS IT Team. All rights reserved</string>
 
     <!--Messages-->
-    <string name="scan_qr">Escanea un codigo QR para continuar</string>
+    <string name="scan_qr">Escanea un codigo para continuar</string>
 
     <!--Error messages-->
-    <string name="invalidUser">Usuario o contraseña incorrecta</string>
-    <string name="user_required">Introduce un usuario o contraseña</string>
+    <string name="invalidUser">Usuario no válido</string>
+    <string name="user_required">Introduce un usuario válido</string>
     <string name="qr_invalid">El codigo escaneado es incorrecto</string>
     <string name="error_login">Error conectando con el servidor></string>
 
@@ -46,6 +49,7 @@
         <item>Scala</item>
         <item>Perl</item>
     </string-array>
-
+    <string name="manual_entry">Manualmente</string>
     <string name="selected_item">Selected item:</string>
+    <string name="enter_quantity">Escanee un código e ingrese la cantidad</string>
 </resources>
