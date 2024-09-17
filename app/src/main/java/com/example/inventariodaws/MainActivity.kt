@@ -302,6 +302,7 @@ class MainActivity : AppCompatActivity() {
                 val planta = selectedNoPlanta?.let { plantaMappings[it] } ?: "No seleccionado"
                 val noEmpleado = scannedCodeL ?: "No escaneado"
 
+
         val items = dataList.map { (code, quantity) ->
             Item(code, quantity.toInt())
         }
