@@ -148,7 +148,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnManual.setOnClickListener {
-            // Mostrar el teclado al hacer clic en el botón, sin mostrar el EditText
             showKeyboard()
         }
 
@@ -287,6 +286,12 @@ class MainActivity : AppCompatActivity() {
             .create()
             .show()
     }
+    private val plantaMappings = mapOf(
+        "DGO" to "A",
+        "DGO SUR" to "SUR",
+        "SJDR" to "SJDR",
+        "NDD" to "ND"
+    )
 
 
     private fun saveData() {
@@ -294,8 +299,8 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Confirmar")
             .setMessage("¿Estás seguro de que deseas guardar los datos?")
             .setPositiveButton("Sí") { _, _ ->
-        val planta = selectedNoPlanta ?: "No seleccionado"
-        val noEmpleado = scannedCodeL ?: "No escaneado"
+                val planta = selectedNoPlanta?.let { plantaMappings[it] } ?: "No seleccionado"
+                val noEmpleado = scannedCodeL ?: "No escaneado"
 
         val items = dataList.map { (code, quantity) ->
             Item(code, quantity.toInt())
