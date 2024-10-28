@@ -1,5 +1,7 @@
 package com.example.inventariodaws
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.BroadcastReceiver
@@ -46,7 +48,9 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.example.inventariodaws.databinding.ActivityMainBinding
 import com.example.inventariodaws.util.showCustomToast
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -61,9 +65,12 @@ class MainActivity : AppCompatActivity() {
     private val dataList = mutableListOf<Pair<String, String>>()
     private var selectedNoPlanta: String? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -116,6 +123,39 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        restoreTableState()
+        animateTableAppearance()
+    }
+
+
+    private fun animateTableAppearance() {
+
+        binding.tableLayout.visibility = View.INVISIBLE
+
+        binding.tableLayout.animate()
+            .alpha(1f)
+            .setDuration(500)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    binding.tableLayout.visibility = View.VISIBLE
+                }
+            })
+    }
+
+
+    private fun restoreTableState() {
+        val sharedPreferences = getSharedPreferences("MainActivityPrefs", MODE_PRIVATE)
+        val dataListJson = sharedPreferences.getString("dataList", null)
+        dataListJson?.let {
+            val savedDataList = Gson().fromJson<List<Pair<String, String>>>(it, object : TypeToken<List<Pair<String, String>>>() {}.type)
+            savedDataList.forEach { (code, quantity) ->
+                addRowToTable(code, quantity)
+            }
+        }
+    }
+
     private fun getSelectedPlanta(): String? {
         val sharedPreferences = getSharedPreferences("MainActivityPrefs", MODE_PRIVATE)
         return sharedPreferences.getString("selectedPlanta", null)
@@ -130,8 +170,13 @@ class MainActivity : AppCompatActivity() {
         binding.btnSubmit.setOnClickListener {
             val quantity = binding.etQuantity.text.toString()
             if (scannedCode != null && quantity.isNotEmpty()) {
-                addRowToTable(scannedCode!!, quantity)
-                binding.etQuantity.text.clear()
+
+                if (dataList.size == 50) {
+                    showConfirmationToSendData()
+                } else {
+                    addRowToTable(scannedCode!!, quantity)
+                    binding.etQuantity.text.clear()
+                }
             } else {
                 Toast(this).showCustomToast(
                     getString(R.string.enter_quantity),
@@ -152,6 +197,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
 
     private fun updateSaveButtonState() {
         if (dataList.isEmpty()) {
@@ -264,11 +310,33 @@ class MainActivity : AppCompatActivity() {
 
         dataList.add(Pair(code, quantity))
 
+        saveDataToSharedPreferences()
+
         updateSaveButtonState()
+
     }
 
+    private fun saveDataToSharedPreferences() {
+        val dataListJson = Gson().toJson(dataList)
+        val sharedPreferences = getSharedPreferences("MainActivityPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("dataList", dataListJson)
+        editor.apply()
+    }
 
-
+    private fun showConfirmationToSendData() {
+        AlertDialog.Builder(this)
+            .setTitle("Limite de datos alcanzado")
+            .setMessage("Se han alcanzado 50 datos. ¿Desea enviarlos?")
+            .setPositiveButton("Enviar") { _, _ ->
+                saveData()
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                // El usuario cancela, simplemente cerrar el diálogo
+                dialog.dismiss()
+            }
+            .show()
+    }
 
     private fun showConfirmationDialog(code: String, quantity: String, row: TableRow) {
         AlertDialog.Builder(this)
@@ -294,6 +362,17 @@ class MainActivity : AppCompatActivity() {
     )
 
 
+    private fun clearSavedData() {
+        val sharedPreferences = getSharedPreferences("MainActivityPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove("dataList")
+        editor.apply()
+
+        dataList.clear()
+
+        binding.tableLayout.removeAllViews()
+    }
+
     private fun saveData() {
         AlertDialog.Builder(this)
             .setTitle("Confirmar")
@@ -301,6 +380,7 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("Sí") { _, _ ->
                 val planta = selectedNoPlanta?.let { plantaMappings[it] } ?: "No seleccionado"
                 val noEmpleado = scannedCodeL ?: "No escaneado"
+
 
 
         val items = dataList.map { (code, quantity) ->
@@ -332,10 +412,11 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ApiResponse>, response: retrofit2.Response<ApiResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@MainActivity, "Datos guardados con éxito", Toast.LENGTH_SHORT).show()
-                    // Reiniciar MainActivity
 
                     saveSelectedPlanta(selectedNoPlanta)
                     startActivity(intent)
+
+                    clearSavedData()
                     finish()
                 } else {
                     Log.e("SaveData", "Error al guardar los datos: ${response.errorBody()?.string()}")
@@ -354,8 +435,13 @@ class MainActivity : AppCompatActivity() {
                 // El usuario cancela, simplemente cerrar el diálogo
                 dialog.dismiss()
             }
+
             .show()
+        saveDataToSharedPreferences()
+
     }
+
+
     // Guardar selección de planta en SharedPreferences
     private fun saveSelectedPlanta(selectedNoPlanta: String?) {
         val sharedPreferences = getSharedPreferences("MainActivityPrefs", MODE_PRIVATE)
@@ -377,6 +463,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
+                clearSavedData()
                 finish()
             }
             .setNegativeButton("No") { dialog, _ ->
