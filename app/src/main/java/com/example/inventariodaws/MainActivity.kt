@@ -119,8 +119,6 @@ class MainActivity : AppCompatActivity() {
             binding.tvUser.visibility = View.VISIBLE
         }
 
-
-
     }
 
     override fun onResume() {
