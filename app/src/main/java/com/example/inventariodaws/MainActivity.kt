@@ -330,7 +330,7 @@ class MainActivity : AppCompatActivity() {
                 saveData()
             }
             .setNegativeButton("Cancelar") { dialog, _ ->
-                // El usuario cancela, simplemente cerrar el diálogo
+
                 dialog.dismiss()
             }
             .show()

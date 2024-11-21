@@ -133,7 +133,7 @@ class LoginActivity : AppCompatActivity() {
         if (userCode.length == 8 && userCode.all { it.isDigit() }) {
 
             val retrofit = Retrofit.Builder()
-                .baseUrl("http://192.168.141.6/materialsapi/") // Cambia por la URL de tu API
+                .baseUrl("http://192.168.141.6/materialsapi/") //  URL de la API
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
